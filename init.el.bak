@@ -1,0 +1,398 @@
+;;;;;;;;;;; ket bind for vssh@ipad ;;;;;;;;;;;
+(global-set-key "≈" 'execute-extended-command)
+(global-set-key "∑" 'kill-ring-save)
+(global-set-key "√" 'scroll-down-command)
+(global-set-key "∫" 'backward-word)
+(global-set-key "ƒ" 'forward-word)
+(global-set-key "¯" 'beginning-of-buffer)
+(global-set-key "˘" 'end-of-buffer)
+(global-set-key "∂" 'kill-word)
+(global-set-key (kbd "<backtab>") 'hs-toggle-hiding)
+
+
+;;;;;;;;;;;;;设置shell;;;;;;;;;;;;;;;;;;;
+(setq shell-file-name "/bin/bash")
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t) 
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t) 
+(setq-default indent-tabs-mode nil)  
+(setq-default tab-width 4) 
+(setq-default c-basic-offset 4)
+
+(add-to-list 'load-path "~/.emacs.d")
+(require 'json-mode)
+(require 'rotate)
+(require 'session)
+(add-hook 'after-init-hook 'session-initialize)
+
+(require 'elf)
+(setq elf-cmd-tool "objdump")
+(require 'arduino-mode)
+
+;; (require 'vlf)
+
+;; (autoload 'enable-paredit-mode "paredit"
+;;   "Turn on pseudo-structural editing of Lisp code."
+;;   t)
+
+;; (require 'yin-mode)
+;; (add-to-list 'auto-mode-alist '("\\.yin$" . yin-mode))
+
+;; (add-hook 'yin-mode-hook
+;;   (lambda ()
+;;     (paredit-mode 1)
+;;     (paren-face-add-support yin-font-lock-keywords)
+;;     (set-face-foreground 'paren-face "DimGray")
+;;     (mapc (lambda (x) (put x 'yin-indent-function 1)) *binding-constructs*)
+
+;;     (defun paredit-insert-comment ()
+;;       (let ((code-after-p
+;;              (save-excursion (paredit-skip-whitespace t (point-at-eol))
+;;                              (not (eolp))))
+;;             (code-before-p
+;;              (save-excursion (paredit-skip-whitespace nil (point-at-bol))
+;;                              (not (bolp)))))
+;;         (cond ((and (bolp)
+;;                     (let ((indent
+;;                            (let ((indent (calculate-lisp-indent)))
+;;                              (if (consp indent) (car indent) indent))))
+;;                       (and indent (zerop indent))))
+;;                ;; Top-level comment
+;;                (if code-after-p (save-excursion (newline)))
+;;                (insert comment-start))
+;;               ((or code-after-p (not code-before-p))
+;;                ;; Code comment
+;;                (if code-before-p
+;;                    (newline-and-indent)
+;;                  (lisp-indent-line))
+;;                (insert comment-start)
+;;                (if code-after-p
+;;                    (save-excursion
+;;                      (newline)
+;;                      (lisp-indent-line)
+;;                      (paredit-indent-sexps))))
+;;               (t
+;;                ;; Margin comment
+;;                (indent-to comment-column 1) ; 1 -> force one leading space
+;;                (insert comment-start)))))))
+
+
+
+
+;;;;;;;;;;; 打开"最近打开文件列表"功能 ;;;;;;;;;;;;;;
+;; (require 'recentf)
+;;     (recentf-mode 1)
+;;     (setq recentf-max-menu-items 25)
+;;     (global-set-key "\C-x\ \C-r" 'recentf-open-files)
+;;;;;;;;;;;;;打开标尺;;;;;;;;;;;;
+(add-hook 'window-configuration-change-hook (lambda () (ruler-mode 1)))
+(setq linum-format "%4d\u2502")  ;; 设置标尺格式
+(add-hook 'find-file-hook (lambda () (linum-mode 1)))
+;;(global-linum-mode t)            ;; 默认全部窗口显示行号.
+
+;; http://blog.deadpansincerity.com/2011/05/setting-up-emacs-as-a-javascript-editing-environment-for-fun-and-profit/;;
+;; 这篇文章太好了, 可以配置一个非常舒服的JS开发环境
+
+;;;;;;;;;;; auto-complete ;;;;;;;;;;;;;;;; 输入两个字母之后,等一会儿,如果有多个候选, 会自动弹出, M-n, M-p可以选择.
+(add-to-list 'load-path "~/.emacs.d")
+; Load the default configuration
+(require 'auto-complete-config)
+; Make sure we can find the dictionaries
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+; Use dictionaries by default
+(setq-default ac-sources (add-to-list 'ac-sources 'ac-source-dictionary))
+(global-auto-complete-mode t)
+; Start auto-completion after 2 characters of a word
+(setq ac-auto-start 2)
+; case sensitivity is important when finding matches
+(setq ac-ignore-case nil)
+
+;;;; 自动生成代码框架, 例如输入完for之后,按TAB键,会自动产生for语句的框架.
+(add-to-list 'load-path  "~/.emacs.d/plugins/yasnippet")
+;; Load the library
+(require 'yasnippet)
+;(yas/initialize)
+(yas-global-mode 1)
+;; Load the snippet files themselves
+;;(yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets/text-mode")
+;; Let's have snippets in the auto-complete dropdown
+(add-to-list 'ac-sources 'ac-source-yasnippet)
+
+;;;; 这个太神奇了, 有一个用NODEJS写的jslint后台服务,和flymake一起,实现实时各种错误或潜在错误提醒. 搜索jslint有很多资源.
+(add-to-list 'load-path "~/.emacs.d/lintnode")
+(require 'flymake-jslint)
+;; Make sure we can find the lintnode executable
+(setq lintnode-location "~/.emacs.d/lintnode")
+;; JSLint can be... opinionated
+(setq lintnode-jslint-excludes (list 'nomen 'undef 'plusplus 'onevar 'white))
+;; Start the server when we first open a js file and start checking
+(add-hook 'js-mode-hook
+          (lambda ()
+            (lintnode-hook)))
+
+;;;; 这个配合jslint, 光标移到错误上面,minibuf会显示错误信息.
+(require 'flymake-cursor)
+
+;;;; Show-hide  代码块缩起来,爽!!!
+(add-hook 'js-mode-hook
+          (lambda ()
+            ;; Scan the file for nested code blocks
+            (imenu-add-menubar-index)
+            ;; Activate the folding mode
+            (hs-minor-mode t)))
+
+(global-set-key (kbd "C-c 1") 'hs-toggle-hiding)
+(global-set-key (kbd "C-2") 'hs-show-all)
+(global-set-key (kbd "C-3") 'hs-hide-all)
+(global-set-key (kbd "C-4") 'hs-show-block)
+(global-set-key (kbd "C-5") 'hs-hide-block)
+
+
+
+;;;;;不知道是啥
+;; (add-to-list 'load-path "~/.emacs.d")
+;; (require 'js-comint)
+
+;; Use node as our repl
+;; (setq inferior-js-program-command "node")
+
+;; (setq inferior-js-mode-hook
+;;       (lambda ()
+;;         ;; We like nice colors
+;;         (ansi-color-for-comint-mode-on)
+;;         ;; Deal with some prompt nonsense
+;;         (add-to-list 'comint-preoutput-filter-functions
+;;                      (lambda (output)
+;;                        (replace-regexp-in-string ".*1G\.\.\..*5G" "..."
+;; 						 (replace-regexp-in-string ".*1G.*3G" "&gt;" output))))))
+
+
+;; http://blog.deadpansincerity.com/2011/05/setting-up-emacs-as-a-javascript-editing-environment-for-fun-and-profit/;;
+
+
+;;;;;;;;;;;;;设置初始加载目录;;;;;;;;;;;;
+;; (add-to-list 'load-path "~/.emacs.d")
+
+
+;;;;;;;;;;;;;加载配色;;;;;;;;;;;;
+(load-theme 'wombat)
+
+;;;;;;;;;;;;;加载git-emacs;;;;;;;;;;;;
+;; (add-to-list 'load-path "~/.emacs.d/git-emacs/")
+;; (require 'git-emacs)
+
+;;;;;;;;;;;;;加载js2-mode;;;;;;;;;;;;
+;(autoload 'js2-mode "js2-mode" nil t)
+;(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
+;;(require 'nodejs-mode)
+
+;;;;;;;;;;;;;加载markdown模式;;;;;;;;;;;;
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;;;;;;;;;;;;;加载nXhtml;;;;;;;;;;;;;;;;;;
+(load "~/.emacs.d/nxhtml/autostart.el")
+
+;;;;;;;;;;;;;加载geben php调试器;;;;;;;;;;;;;
+;;(add-to-list 'load-path "~/.emacs.d/geben")
+;;(require 'geben)
+;;(require 'dbgp)
+
+
+(defun flymake-html-init ()
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                     'flymake-create-temp-inplace))
+         (local-file (file-relative-name
+                      temp-file
+                      (file-name-directory buffer-file-name))))
+    (list "tidy" (list local-file))))
+
+(add-to-list 'flymake-allowed-file-name-masks
+             '("\\.html$\\|\\.ctp" flymake-html-init))
+
+(add-to-list 'flymake-err-line-patterns
+             '("line \\([0-9]+\\) column \\([0-9]+\\) - \\(Warning\\|Error\\): \\(.*\\)"
+               nil 1 2 4))
+
+;;;;; 打开buffer快速切换功能 ;;;;;
+(iswitchb-mode 1)
+
+; Mumamo is making emacs 23.3 freak out:修正nXhtml错误
+
+;; Workaround the annoying warnings:
+;;    Warning (mumamo-per-buffer-local-vars):
+;;    Already 'permanent-local t: buffer-file-name
+(when (and (equal emacs-major-version 24)
+           (equal emacs-minor-version 3))
+  (eval-after-load "mumamo"
+    '(setq mumamo-per-buffer-local-vars
+           (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
+
+(when (and (equal emacs-major-version 24)
+           (equal emacs-minor-version 3))
+  (eval-after-load "bytecomp"
+    '(add-to-list 'byte-compile-not-obsolete-vars
+                  'font-lock-beginning-of-syntax-function
+		  'font-lock-syntactic-keywords))
+  ;; tramp-compat.el clobbers this variable!
+  (eval-after-load "tramp-compat"
+    '(add-to-list 'byte-compile-not-obsolete-vars
+                  'font-lock-beginning-of-syntax-function)))
+
+;; Suppress this warning when using mumamo:
+;; Warning: `font-lock-syntactic-keywords' is an obsolete variable (as of 24.1);
+;;     use `syntax-propertize-function' instead.
+
+(when (and (equal emacs-major-version 24)
+           (equal emacs-minor-version 3))
+  (eval-after-load "bytecomp"
+    '(add-to-list 'byte-compile-not-obsolete-vars
+                  'font-lock-syntactic-keywords)))
+;; See: http://stackoverflow.com/a/5470584/727827
+
+
+;;;;;;;;;;;;;;;设定从emacswiki安装el文件;;;;;;;;;;;;;;;;
+;; M-x: 
+;;   install-elisp-from-emacswiki 
+;; Pagename: 
+;;   anything.el 
+;;(add-to-list 'load-path "~/.emacs.d/") 
+(require 'install-elisp) 
+(setq install-elisp-repository-directory "~/.emacs.d/");
+
+
+;;;;;;;;;;;;;设定php自动补全;;;;;;;;;;;;;;;;;;
+;;(add-to-list 'load-path "~/.emacs.d")
+;;(add-hook 'php-mode-hook
+;;          (lambda ()
+;;            (require 'php-completion)
+;;            (php-completion-mode t)
+;;            (define-key php-mode-map (kbd "C-o") 'phpcmp-complete)))
+
+;; Cooperation with auto-complete.el:
+;;
+;; add these lines to your .emacs file:
+;(add-hook  'php-mode-hook
+;            (lambda ()
+;              (when (require 'auto-complete nil t)
+;                (make-variable-buffer-local 'ac-sources)
+;                (add-to-list 'ac-sources 'ac-source-php-completion-patial)
+;                (add-to-list 'ac-sources 'ac-source-php-completion)
+;                (auto-complete-mode t))));
+
+;; (add-hook 'dired-mode-hook 
+;;           (lambda ()
+;;             (interactive)
+;;             (define-key dired-mode-map (kbd "<M-up>" ) 'dired-up-directory)
+;;             (define-key dired-mode-map (kbd "ESC <up>" ) 'dired-up-directory)
+;;             (define-key dired-mode-map (kbd "<M-down>" ) 'dired-view-file)
+;;             (define-key dired-mode-map (kbd "ESC <down>" ) 'dired-view-file)
+;;             ))
+            
+                             
+;;;;;;;;;;;;;拼音输入法;;;;;;;;;;;;;;;;;;
+;; EIM Input Method. Use C-\ to toggle input method.
+(add-to-list 'load-path "~/.emacs.d/eim")
+(require 'eim-extra)
+(autoload 'eim-use-package "eim" "Another emacs input method")
+(setq eim-use-tooltip nil)              ; don't use tooltip
+(setq eim-punc-translate-p nil)         ; use English punctuation
+(register-input-method
+ "eim-py" "euc-cn" 'eim-use-package
+ "拼音" "EIM Chinese Pinyin Input Method" "py.txt"
+ 'my-eim-py-activate-function)
+(set-input-method "eim-py")             ; use Pinyin input method
+(setq activate-input-method t)          ; active input method
+(toggle-input-method nil)               ; default is turn off
+(defun my-eim-py-activate-function ()
+  (add-hook 'eim-active-hook
+            (lambda ()
+              (let ((map (eim-mode-map)))
+                (define-key eim-mode-map "-" 'eim-previous-page)
+                (define-key eim-mode-map "=" 'eim-next-page)
+		(define-key eim-mode-map "<" 'eim-previous-page)
+                (define-key eim-mode-map ">" 'eim-next-page)
+		(define-key eim-mode-map "," 'eim-previous-page)
+                (define-key eim-mode-map "." 'eim-next-page)
+		))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(js-auto-indent-flag t)
+ '(js-curly-indent-offset 0)
+ '(js-expr-indent-offset 0)
+ '(js-paren-indent-offset 0)
+ '(js-square-indent-offset 0)
+ '(send-mail-function (quote sendmail-send-it))
+ '(session-use-package t nil (session)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(mumamo-background-chunk-major ((t (:background "color-235"))))
+ '(mumamo-background-chunk-submode1 ((t (:background "color-233"))))
+ '(mumamo-background-chunk-submode2 ((t (:background "color-240")))))
+(put 'set-goal-column 'disabled nil)
+
+
+
+
+;; Load CEDET.
+;; See cedet/common/cedet.info for configuration details.
+;; IMPORTANT: For Emacs >= 23.2, you must place this *before* any
+;; CEDET component (including EIEIO) gets activated by another 
+;; package (Gnus, auth-source, ...).
+;;;;;;(load-file "~/.emacs.d/vendor/cedet/cedet-devel-load.el")
+
+;; Add further minor-modes to be enabled by semantic-mode.
+;; See doc-string of `semantic-default-submodes' for other things
+;; you can use here.
+;; (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
+;; (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
+;; (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
+
+;; ;; Enable Semantic
+;; (semantic-mode 1)
+
+;; ;; Enable EDE (Project Management) features
+;; (global-ede-mode 1)
+
+;; ;; Configure arduino OS X dirs.
+;; (setq ede-arduino-appdir "/Users/gxy/src/arduino/Arduino.app/Contents/Resources/Java")
+
+
+
+;; (defun move-line (n)
+;;   "Move the current line up or down by N lines."
+;;   (interactive "p")
+;;   (setq col (current-column))
+;;   (beginning-of-line) (setq start (point))
+;;   (end-of-line) (forward-char) (setq end (point))
+;;   (let ((line-text (delete-and-extract-region start end)))
+;;     (forward-line n)
+;;     (insert line-text)
+;;     ;; restore point to original column in moved line
+;;     (forward-line -1)
+;;     (forward-char col)))
+
+;; (defun move-line-up (n)
+;;   "Move the current line up by N lines."
+;;   (interactive "p")
+;;   (move-line (if (null n) -1 (- n))))
+
+;; (defun move-line-down (n)
+;;   "Move the current line down by N lines."
+;;   (interactive "p")
+;;   (move-line (if (null n) 1 n)))
+
+;; (global-set-key (kbd "M-<up>") 'move-line-up)
+;; (global-set-key (kbd "M-<down>") 'move-line-down)
+;; (put 'downcase-region 'disabled nil)
+
+(put 'upcase-region 'disabled nil)
