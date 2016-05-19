@@ -25920,7 +25920,7 @@ xian-zhi-mei-tu-pu 限制脢图谱
 xian-zhou 线轴
 xian-zhu 显着
 xian-zhuang 现状
-xiang 响 向 项 详 想 像 相 象 翔 香 享 降 箱 乡 厢 巷 镶 橡 飨 鲞 祥 湘 襄 蠁 膷 缃 骧 庠 纕 饷 曏 葙 忀 芗 瓖 蟓
+xiang 向 响 项 详 想 像 相 象 翔 香 享 降 箱 乡 厢 巷 镶 橡 飨 鲞 祥 湘 襄 蠁 膷 缃 骧 庠 纕 饷 曏 葙 忀 芗 瓖 蟓
 xiang-bei-di 向北地
 xiang-bi 相比
 xiang-bin-jiu 香槟酒
@@ -27561,7 +27561,7 @@ yan-zhong-wen-ti 严重问题
 yan-zhou 兖州
 yan-zi 燕子
 yan-zou 演奏
-yang 样 杨 阳 养 扬 洋 仰 佯 痒 氧 羊 恙 鞅 漾 疡 秧 鸯 央 殃 颺 烊 炀 瀁 胦 徉 鍚 昜 泱 暘 怏 坱 癢 垟 蛘
+yang 阳 样 杨 养 扬 洋 仰 佯 痒 氧 羊 恙 鞅 漾 疡 秧 鸯 央 殃 颺 烊 炀 瀁 胦 徉 鍚 昜 泱 暘 怏 坱 癢 垟 蛘
 yang-bai-han 杨百翰
 yang-bai-han-da-xue 杨百翰大学
 yang-ben 样本

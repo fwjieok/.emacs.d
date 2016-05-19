@@ -75,11 +75,7 @@
 
 (add-hook 'after-init-hook
           (lambda ()
-            ;; (load-theme 'ritchie t)
-            ;; (load-theme 'tsdh-dark t)
-            ;; (load-theme 'wilson t)
-            ;; (load-theme 'manoj-dark t)
-            ;; (load-theme 'wombat t)
+            (load-theme 'tango-dark)
             ))
 
 
@@ -230,7 +226,8 @@
      (320 . "#99DDE0")
      (340 . "#9CC7FB")
      (360 . "#E090C7"))))
- '(vc-annotate-very-old-color "#E090C7"))
+ '(vc-annotate-very-old-color "#E090C7")
+ '(w3m-home-page "https://fwall.club"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
