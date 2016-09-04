@@ -9,7 +9,6 @@
          load-path)))
 
 (require 'eim-extra)
-(require 'ido)
 (require 'yasnippet)
 (require 'flymake-jslint)
 (require 'flymake-cursor)
@@ -59,7 +58,6 @@
 (add-hook 'find-file-hook (lambda () (linum-mode 1)))
 ;;(global-linum-mode t)            ;; 默认全部窗口显示行号.
 ;; (iswitchb-mode 1)
-(ido-mode t)
 
 
 
@@ -78,6 +76,20 @@
             (load-theme 'tango-dark)
             ))
 
+(defun sql-exec-select-text ()
+  "Send select select text with sql-send-string"
+  (interactive)
+  (if mark-active
+      (sql-send-string (buffer-substring (mark) (point)))
+    (message "Select SQL to execute first..." )))
+
+(add-hook 'sql-mode-hook
+           (lambda () 
+             (define-key sql-mode-map (kbd "C-j") 'sql-exec-select-text)))
+
+(add-hook 'sql-mode-hook
+           (lambda () 
+             (toggle-truncate-lines)))
 
 ;;;;;;;;;;;;;rtags;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
